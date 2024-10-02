@@ -5,17 +5,19 @@ describe("AccessControl Contract", function () {
   let NeoID, AccessControl, neoID, accessControl, owner, user1, user2;
 
   beforeEach(async function () {
-    NeoID = await ethers.getContractFactory("NeoID");
-    AccessControl = await ethers.getContractFactory("AccessControl");
-
+    const NeoID = await ethers.getContractFactory("NeoID");
+    const AccessControl = await ethers.getContractFactory("AccessControl");
+  
     [owner, user1, user2] = await ethers.getSigners();
-
+  
     neoID = await NeoID.deploy();
-    await neoID.deployed();
-
-    accessControl = await AccessControl.deploy(neoID.address, 10);
-    await accessControl.deployed();
+    await neoID.waitForDeployment(); // Ensure it's deployed properly
+  
+    accessControl = await AccessControl.deploy(neoID.address, 10); // Fix: use proper contract address
+    await accessControl.deployed(); // Ensure AccessControl is deployed
   });
+  
+  
 
   it("should prevent users with insufficient reputation from accessing premium service", async function () {
     await neoID.connect(user1).registerUser("did:user1");

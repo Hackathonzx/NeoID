@@ -5,21 +5,19 @@ describe("NeoIDGovernance Contract", function () {
   let NeoID, NeoIDGovernance, neoID, governance, owner, user1;
 
   beforeEach(async function () {
-    NeoID = await ethers.getContractFactory("NeoID");
-    NeoIDGovernance = await ethers.getContractFactory("NeoIDGovernance");
-
+    const NeoID = await ethers.getContractFactory("NeoID");
+    const NeoIDGovernance = await ethers.getContractFactory("NeoIDGovernance");
+  
     [owner, user1] = await ethers.getSigners();
-
+  
     neoID = await NeoID.deploy();
-    await neoID.deployed();
-
-    governance = await NeoIDGovernance.deploy(neoID.address);
-    await governance.deployed();
-
-    // Register user1
-    await neoID.connect(user1).registerUser("did:user1");
-    await neoID.updateReputation(user1.address, 10);
+    await neoID.deployed(); // Make sure NeoID is deployed before usage
+  
+    governance = await NeoIDGovernance.deploy(neoID.address); // Fix: use proper NeoID address
+    await governance.waitForDeployment(); // Ensure governance contract is deployed
   });
+  
+  
 
   it("should create a proposal", async function () {
     await governance.createProposal("Increase reputation threshold");

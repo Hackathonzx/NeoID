@@ -7,9 +7,9 @@ describe("NeoID Contract", function () {
   beforeEach(async function () {
     NeoID = await ethers.getContractFactory("NeoID");
     [owner, user1, user2, whitelistedAddress] = await ethers.getSigners();
-    neoID = await NeoID.deploy();
-    await neoID.deployed();
+    neoID = await NeoID.deploy(); // Fix: no need to use .deployed()
   });
+  
 
   it("should allow owner to add a user and emit the UserRegistered event", async function () {
     await expect(neoID.connect(user1).registerUser("did:user1"))

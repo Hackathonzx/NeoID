@@ -12,5 +12,5 @@ module.exports = {
       gasPrice: "auto",
       gasMultiplier: 2,
     }
-  }
+  },
 };
