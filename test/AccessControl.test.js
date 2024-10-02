@@ -2,32 +2,45 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("AccessControl Contract", function () {
-  let NeoID, AccessControl, neoID, accessControl, owner, user1, user2;
+  let AccessControl, accessControl, NeoID, neoID, owner, user;
+  const requiredReputation = 100;
 
   beforeEach(async function () {
-    const NeoID = await ethers.getContractFactory("NeoID");
-    const AccessControl = await ethers.getContractFactory("AccessControl");
-  
-    [owner, user1, user2] = await ethers.getSigners();
-  
-    neoID = await NeoID.deploy();
-    await neoID.waitForDeployment(); // Ensure it's deployed properly
-  
-    accessControl = await AccessControl.deploy(neoID.address, 10); // Fix: use proper contract address
-    await accessControl.deployed(); // Ensure AccessControl is deployed
-  });
-  
-  
+    [owner, user] = await ethers.getSigners();
 
-  it("should prevent users with insufficient reputation from accessing premium service", async function () {
-    await neoID.connect(user1).registerUser("did:user1");
-    await expect(accessControl.connect(user1).accessPremiumService()).to.be.revertedWith("Not enough reputation to access this service");
+    // Deploy NeoID contract
+    NeoID = await ethers.getContractFactory("NeoID");
+    neoID = await NeoID.deploy();
+    await neoID.waitForDeployment();
+
+    // Deploy AccessControl contract
+    AccessControl = await ethers.getContractFactory("AccessControl");
+    accessControl = await AccessControl.deploy(neoID.address, requiredReputation);
+    await accessControl.deployed();
+
+    // Register user in NeoID
+    await neoID.connect(user).registerUser("userDID");
   });
 
   it("should allow users with sufficient reputation to access premium service", async function () {
-    await neoID.connect(user1).registerUser("did:user1");
-    await neoID.updateReputation(user1.address, 20);
+    // Set user's reputation to meet the requirement
+    await neoID.connect(owner).updateReputation(user.address, requiredReputation);
 
-    await expect(accessControl.connect(user1).accessPremiumService()).to.not.be.reverted;
+    // User should be able to access premium service
+    await expect(accessControl.connect(user).accessPremiumService()).to.not.be.reverted;
+  });
+
+  it("should prevent users with insufficient reputation from accessing premium service", async function () {
+    // Set user's reputation below the requirement
+    await neoID.connect(owner).updateReputation(user.address, requiredReputation - 1);
+
+    // User should not be able to access premium service
+    await expect(accessControl.connect(user).accessPremiumService()).to.be.revertedWith("Not enough reputation to access this service");
+  });
+
+  it("should allow updating the required reputation", async function () {
+    const newReputation = 200;
+    await accessControl.connect(owner).updateRequiredReputation(newReputation);
+    expect(await accessControl.requiredReputation()).to.equal(newReputation);
   });
 });
