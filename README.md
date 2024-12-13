@@ -8,7 +8,7 @@ The NeoID Reputation System is a decentralized identity and reputation managemen
 - AccessControl: Restricts access to premium services based on user reputation.
 - NeoIDGovernance: Implements a basic governance mechanism where users with reputation can create and vote on proposals.
 
-**Contracts**
+# Contracts
 1. NeoID.sol
 The NeoID contract handles the registration of users with Decentralized Identifiers (DIDs) and tracks their reputation scores. It ensures that only authorized addresses (whitelisted addresses or admin) can update reputation scores.
 
@@ -52,30 +52,34 @@ Events:
 - ProposalCreated(uint256 proposalId, string description): Emitted when a proposal is created.
 - Voted(uint256 proposalId, address voter, bool support, uint256 reputation): Emitted when a user votes on a proposal.
 
-**Deployment Instructions**
+# Deployment Instructions
 1. Install Dependencies: Ensure you have Node.js, npm, and Hardhat installed.
 
 2. Clone the Repository:
+
 git clone https://github.com/Hackathonzx/NeoID.git
+
 cd NeoID.git
 
 3. Install NPM Packages:
-npm install
+- npm install
 
 4. Compile the Contracts: 
-npx hardhat compile
+- npx hardhat compile
 
 5. Deploy Contracts: 
+
 npx hardhat run ignition/modules/deploy.js --network neoXTestnet
+
 Interact with Contracts: After deploying, you can interact with the contracts via the Hardhat console or scripts.
 
-- Here are the addresses to the deployed script:
-NeoID deployed to: 0x7c9D4E3769FD085566de1DB20E5703D3Ec50d37f
-ReputationManager deployed to: 0xe34c86A03F17E29F77beeE7c898Adae4dD578006
-AccessControl deployed to: 0x7516abedc7e8ca01143ad636a6963B9887FC7Cf6
-NeoIDGovernance deployed to: 0xA0BF7F60ec762cc7b88dEc415D46F12cFF130a55
+Here are the addresses to the deployed script:
+- NeoID deployed to: 0x7c9D4E3769FD085566de1DB20E5703D3Ec50d37f
+- ReputationManager deployed to: 0xe34c86A03F17E29F77beeE7c898Adae4dD578006
+- AccessControl deployed to: 0x7516abedc7e8ca01143ad636a6963B9887FC7Cf6
+- NeoIDGovernance deployed to: 0xA0BF7F60ec762cc7b88dEc415D46F12cFF130a55
 
-**Usage**
+# Usage
 1. Register a User: Users can register themselves by calling the registerUser() function in the NeoID contract:
    - neoID.registerUser("your-did");
 2. Update Reputation: Admin or whitelisted addresses can update a user’s reputation through the updateReputation()
@@ -87,16 +91,18 @@ function:
    - neoIDGovernance.createProposal("Proposal description");
    - neoIDGovernance.vote(proposalId, true);  // true for supporting the proposal
 
-**Access Control & Security**
+# Access Control & Security
 - Whitelist Management: Only the admin can add or remove whitelisted addresses that have the authority to update reputations.
 - Reputation-Based Access: The AccessControl contract restricts certain functionalities to users with a minimum reputation score.
 - Governance Voting: Only users with reputation can participate in governance and voting.
 
-**Testing**
+# Testing
+
 To run the unit tests for the smart contracts, run:
+
 npx hardhat test
 
-**Future Improvements**
+# Future Improvements
 - Role-Based Access Control: Consider implementing roles to manage different levels of access beyond whitelisting.
 - Tokenization of Reputation: Implement a token-based reward system for reputation increases, adding incentives for user participation.
 - Reputation Slashing: Integrate a system where users can lose reputation for misbehavior or inactivity.
